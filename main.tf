@@ -1,28 +1,12 @@
-provider "aws" {
-  region = var.region
+resource "time_sleep" "wait" {
+  create_duration = var.delay
 }
 
-data "aws_ami" "ubuntu" {
-  most_recent = true
+resource "random_string" "random" {
+  length  = 4
+  upper   = false
+  numeric = false
+  special = false
 
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
-}
-
-resource "aws_instance" "ubuntu" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
-
-  tags = {
-    Name = var.instance_name
-  }
+  depends_on = [time_sleep.wait]
 }
